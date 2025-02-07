@@ -1,0 +1,14 @@
+{% extends 'medicines/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Add Medicine</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <label>Upload Multiple Images:</label>
+        <input type="file" name="images" multiple required>
+        <br>
+        <button type="submit" class="btn btn-primary mt-3">Add Medicine</button>
+    </form>
+</div>
+{% endblock %}

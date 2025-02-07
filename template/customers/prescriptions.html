@@ -1,0 +1,71 @@
+{% extends 'customers/customer.html' %}
+ {% load static %}
+ {% block content %}
+ 
+ <div class="row">
+   
+    <div class="col-lg-12 m-3">
+     <!-- Button trigger modal -->
+
+<form action="/prescription" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="fa-sharp fa-solid fa-plus"></i>
+      </button>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Prescription</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="file" name="prescription" id="">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+    </div>
+    <div class="col-lg-12 mt-3">
+        <table class="table table-secondary">
+            <tr>
+                <th>Prescription</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Remarks</th>
+                <th>Date</th>
+                <th>Action</th>
+
+            </tr>
+            {% for prescription in prescriptions %}
+            <tr>
+                <td><a href="{{ prescription.prescription.url }}" download=""/> document</a> </td>
+                <td>
+                    <i class="fa-solid fa-indian-rupee-sign"></i>   {{ prescription.total_amount }}
+                </td>
+                <td>
+                    {{ prescription.status }}
+                </td>
+                <td>
+                    {{ prescription.remarks }}
+                </td>
+                <td>{{ prescription.created_at }}</td>
+                <td>
+                    <a href="/prescriptioncheckout">Checkout</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+ </div>
+ 
+
+
+
+ {% endblock %}

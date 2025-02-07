@@ -1,0 +1,54 @@
+{% extends 'customers/customer.html' %}
+ {% load static %}
+ {% block content %}
+    <table>
+        <tr>
+            <td>Medicine Name</td>
+            <td>Quantity</td>
+            <td>Price</td>
+            <td>Total</td>
+            <td>Action</td>
+        </tr>
+        {% for item in cart %}
+        <tr>
+            <td>{{ item.medicine.name }}</td>
+            <td> 
+                <input type="number" min="{{ item.quantity }}" value="{{ item.quantity }}" id="quantity" />
+            </td>
+            <td class="price">{{ item.medicine.price }}</td>
+            <td class="total">
+                {% with total=item.medicine.price|floatformat:2|add:item.quantity|floatformat:2 %}
+                    {{ item.total }}
+                {% endwith %}
+            </td>
+            <td>
+                <a href="cartdelete/{{item.id}}">Delete</a>
+                <button type="button" onclick='order({{item.id}},"#quantity")'>
+                    order
+                </button>'
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <script>
+        const qty=document.querySelector("#quantity")
+        qty.addEventListener("change",()=>{
+            const price=document.querySelectorAll(".price");
+            let totalprice;
+            for(let i=0;i<price.length;i++){
+                totalprice=parseInt(qty.value) * parseInt(price[i].innerHTML)
+                console.log(totalprice)
+                document.querySelector(".total").innerHTML=totalprice;
+            }
+           
+            
+            
+            
+            
+        })
+        function order(cartid,qty){
+            let qtyno=parseFloat(document.querySelector(qty))
+            window.location.href=`/order?cartid=${cartid}&qty=${6}`;
+        }
+    </script>
+{% endblock %}

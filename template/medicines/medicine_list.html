@@ -1,0 +1,75 @@
+{% extends 'customers/customer.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="container mt-5">
+        <h2 class="mb-4"><i class="fa-solid fa-house-medical"></i> Medicine List</h2>
+        <div class="row">
+            {% for medicine in medicines %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ medicine.image.url }}" class="card-img-top" alt="{{ medicine.name }}" style="height:190px;">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa-solid fa-pen-nib"></i> {{ medicine.name }} id:{{medicine.id}}</h5>
+                        <p class="card-text"><i class="fa-solid fa-clipboard"></i> {{ medicine.description }}</p>
+                        <p class="text-muted"> <i class="fa-solid fa-indian-rupee-sign"></i> {{ medicine.price }}</p>
+                        <a href="{% url 'medicine_detail' medicine.id %}" class="btn btn-primary"><i class="fa-solid fa-arrow-turn-right"></i> View Details</a>
+                        <details>
+                            <summary>Comment</summary>
+                            <form action="/comments" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="medicineid" value="{{medicine.id}}"  hidden id="">
+                                <textarea name="comment" id=""></textarea>
+                                <button type="submit">comments</button>
+                            </form>
+                        </details>
+                     
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- <h2 class="mb-4">Medicine List</h2>
+    <a href="{% url 'add_medicine' %}" class="btn btn-primary mb-3">Add Medicine</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Department</th>
+                <th>Description</th>
+                <th>Expiry Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+            <tr class="{% if medicine.is_expired %}table-danger{% elif medicine.is_low_stock %}table-warning{% endif %}">
+                <td><img src="{{ medicine.images.url }}" alt="{{ medicine.name }}" width="50"></td>
+                <td>{{ medicine.name }}</td>
+                <td>{{ medicine.category }}</td>
+                <td>${{ medicine.price }}</td>
+                <td>{{ medicine.stock }}</td>
+                <td>{{ medicine.department}}</td>
+                <td>{{ medicine.description }}</td>
+                <td>{{ medicine.expiry_date }}</td>
+                <td>
+                    <a href="{% url 'update_medicine' medicine.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'delete_medicine' medicine.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No medicines available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table> 
+</div> -->
+
+
+{% endblock %}

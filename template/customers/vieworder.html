@@ -1,0 +1,48 @@
+{% extends 'customers/customer.html' %}
+ {% load static %}
+ {% block content %}
+    <table class="table table-primary text-center p-3">
+        <tr>
+            <th>
+                slrno
+            </th>
+            <th>
+                Medicine Name
+            </th>
+            <th>
+                Total Amount
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Date
+            </th>
+            <th>
+                Order Status
+            </th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>#</td>
+            <td>
+                {{order.cart.medicine.name}}
+                <br/>
+                <img src="{{ order.cart.medicine.image.url }}" alt="{{order.cart.medicine.name}}" style="width:70px; height:70px;">
+            </td>
+            <td>
+                {{order.total_amount}}
+            </td>
+            <td>
+                {{order.qty}}
+            </td>
+            <td>
+                {{order.created_at}}
+            </td>
+            <td>
+                {{order.status}}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
