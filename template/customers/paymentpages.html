@@ -1,0 +1,71 @@
+{% extends 'customers/customer.html' %}
+{% load static %}
+   {% block title %} Payment Page{% endblock %}
+   {% block content%}
+   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  
+    
+    <div>
+        <button  id="rzp-button1" type="button">PayAmount</button>
+        <a href="/paymentcancel">Cancel</a>
+    </div>
+ <!-- razopay payment gate way-->
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let options = {
+            key: "rzp_test_7hb2qNT6dYNvSS",  // Replace with your Razorpay Test Key
+            amount:{{request.session.grand_total}} *100,  // Amount in paise (₹500)
+            currency: "INR",
+            name: "Your Company Name",
+            description: "Test Transaction",
+            image: "https://your-logo-url.com/logo.png",
+            order_id: "",  // You can generate this from your Django backend (optional)
+            handler: function (response) {
+                alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                
+                // Send payment details to Django backend
+                fetch("/payment-success/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",  // Pass CSRF token for Django
+                    },
+                    body: JSON.stringify({
+                        payment_id: response.razorpay_payment_id,
+                        order_id: response.razorpay_order_id,
+                        signature: response.razorpay_signature,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Payment Response:", data);
+                    window.location.href = "/paymentsuccess";
+                })
+                .catch(error => console.error("Error:", error));
+            },
+            prefill: {
+                name: "Heath ai",
+                email: "info@healtai.com",
+                contact: "9876543210",
+            },
+            notes: {
+                address: "Razorpay Corporate Office",
+            },
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        let rzp = new Razorpay(options);
+        // document.getElementById("rzp-button1").onclick = function (e) {
+        //     rzp.open();
+        //     e.preventDefault();
+        // };
+        window.onload = function () {
+    rzp.open();
+};
+    });
+</script>
+<!-- end razorpayment-->
+
+ {% endblock %}

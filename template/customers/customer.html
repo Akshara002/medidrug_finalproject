@@ -105,6 +105,9 @@ body {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(255, 77, 148, 0.3);
 }
+a {
+    text-decoration: none;
+}
 
 </style>
 </head>
@@ -132,7 +135,15 @@ body {
                     <a class="nav-link" href="/medicinelist"><i class="fa-solid fa-pills"></i> Medicine</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/cartview"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+                    <a class="nav-link" href="/cartview">
+                        <i class="fa-solid fa-cart-shopping fs-5 position-relative">
+                            <sup class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ request.session.cart_count|default:"0" }}
+                            </sup>
+                        </i> Cart
+                    
+                   
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/vieworder"><i class="fa-solid fa-box"></i> Orders</a>

@@ -8,6 +8,8 @@ from .models import Medicine,MedicineImage,Customer,User_tbl,CustomerCart,Ordern
 from .forms import MedicineForm,MedicineImageForm,CustomerForm
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from django.db.models import Q
+from datetime import datetime, timedelta
+
 def viewPrescription(request):
     prescription=Prescription.objects.filter(user=request.session.get('userid'))
     return render(request,'customers/prescriptions.html',{"prescriptions":prescription})
@@ -127,42 +129,101 @@ def sendOTP(request):
 
     return render(request,'comments.html')
 def viewOrder(request):
-    user=User_tbl.objects.get(id=request.session.get('userid'))
-    order=Ordernew.objects.select_related('user','cart').filter(user=user)
-    return render(request,'customers/vieworder.html',{"orders":order})
+    user_id = request.session.get('customerid')
+    user = User_tbl.objects.get(id=user_id)
+    user_orders = Order.objects.filter(user=user)
+    order_items = OrderItem.objects.filter(order__in=user_orders)
+
+    return render(request, 'customers/vieworder.html', {"orders": user_orders})
+def order_delete(request,pk):
+    order=Order.objects.get(id=pk)
+    order.delete()
+    messages.info(request,"Order Deleted successfully")
+    return redirect("/vieworder")
+def orderitems(request,pk):
+    user_id = request.session.get('customerid')
+    user = User_tbl.objects.get(id=user_id)
+    order=Order.objects.get(id=pk)
+    order_items = OrderItem.objects.filter(order=order)
+    return render(request, 'customers/orderitems.html', {"orders": order_items})
+
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import User_tbl, Ordernew, DeliveryDetail, Order, OrderItem, CustomerCart
+
 def Checkout(request):
-    if request.method=="POST":
-        orderid=request.session.get('orderid')
-        userid=request.session.get('userid')
-        user=User_tbl.objects.get(id=userid)
-        order=Ordernew.objects.get(id=orderid)
-        houseno=request.POST.get("houseno")
-        street=request.POST.get("street")
-        city=request.POST.get("city")
-        state=request.POST.get("state")
-        country=request.POST.get("country")
-        zipcode=request.POST.get("zipcode")
-        DeliveryDetail.objects.create(
-            order=order,user=user,
-            houseno=houseno,
-            street=street,
-            city=city,
-            state=state,
-            country=country,
-            zipcode=zipcode
-        )
-    return redirect("customer")    
+    now=datetime.now()
+    two_day_later=now+timedelta(days=2)
+    if request.method == "POST":
+        try:
+            # Get user and order from session
+            user_id = request.session.get('customerid')
+            order_id = request.session.get('orderid')
+            user = User_tbl.objects.get(id=user_id)
+       
+            grand_total = request.session.get('grand_total')
+            order_o = Order.objects.create(
+                user=user,
+                total_amount=grand_total,
+                status="Paid",
+                deliverydate=two_day_later
+            )
+
+            # Add items to the order
+            if order_o:
+                DeliveryDetail.objects.create(
+                order=order_o,
+                user=user,
+                houseno=request.POST.get("houseno"),
+                street=request.POST.get("street"),
+                city=request.POST.get("city"),
+                state=request.POST.get("state"),
+                country=request.POST.get("country"),
+                zipcode=request.POST.get("zipcode"),
+                landmark=request.POST.get("Landmark"),
+                deliverydate=two_day_later
+               )
+
+                cart_items = request.session.get('cart_items', [])
+                for cart in cart_items:
+                    try:
+                        
+                        cart_obj = CustomerCart.objects.get(id=cart['cart_id'])
+                        OrderItem.objects.create(
+                            order=order_o,
+                            medicine=cart_obj.medicine,
+                            total_qty=cart['quantity'],
+                            total_price=cart_obj.total
+                            
+                        )
+                        cart=CustomerCart.objects.get(id=cart['cart_id'])
+                        cart.delete()
+                    except CustomerCart.DoesNotExist:
+                        print(f"Cart item with ID {cart['cart_id']} does not exist.")
+
+            messages.success(request, "Payment completed and order placed successfully.")
+        except Exception as e:
+            messages.error(request, f"Something went wrong: {e}")
+
+    return redirect("customer")
+
 
         
         
     
 def prescriptionCheckout(request):
+    now=datetime.now()
+    two_days_later=now + timedelta(days=2)
+    user=User_tbl.objects.get(id=request.session.get('customerid'))
+   
+    request.session['prescription_amount']=request.GET.get('amount')
     if request.method=="POST":
         prescriptionid=request.session.get('prescriptionid')
         userid=request.session.get('userid')
         user=User_tbl.objects.get(id=userid)
         prescription=Prescription.objects.get(id=prescriptionid)
         prescription.status="Payment Completed"
+        prescription.deliverydate=two_days_later
         prescription.save()
         houseno=request.POST.get("houseno")
         street=request.POST.get("street")
@@ -177,7 +238,9 @@ def prescriptionCheckout(request):
             city=city,
             state=state,
             country=country,
-            zipcode=zipcode
+            zipcode=zipcode,
+            deliverydate=two_days_later,
+            landmark=request.POST.get("Landmark"),
         )
         return redirect("/viewprescription")
     return render(request,'customers/prescriptioncheckout.html')    
@@ -203,14 +266,19 @@ def  order(request):
         orderdetail=Ordernew.objects.select_related('user','cart').get(id=order.id)
     return  render(request,'customers/checkout.html',{"orders":order})
 def cartDelete(request,itemid):
+    
     cart= get_object_or_404(CustomerCart,id=itemid)
     cart.delete()
+    cart_count=int(request.session.get('cart_count')) 
+    cart_count-=1 
+    request.session['cart_count']=cart_count
     messages.info(request, "Medicine deleted successfully!")
     return redirect("/cartview/")
 
 def addtoCart(request):
     if request.method=="POST":
         quantity=request.POST.get("quantity")
+        price=float(request.POST.get('offerprice'))
         userid=request.session.get("userid")
         user=User_tbl.objects.get(id=userid)
         medicineid=request.session.get("medicineid")
@@ -222,10 +290,12 @@ def addtoCart(request):
         
         medicine.stock=medicine.stock-int(quantity)
         medicine.save()
+        price=int(quantity)*price
         CustomerCart.objects.create(
-            user=user,medicine=medicine,quantity=quantity
+            user=user,medicine=medicine,quantity=quantity,status="InCart",
+            total=price
         )
-        return redirect("viewCart")
+        return redirect("customer")
     else:
         return  redirect("customer")
        
@@ -233,10 +303,13 @@ def viewCart(request):
     userid=request.session.get("userid")
     user=User_tbl.objects.get(id=userid)
     obj=CustomerCart.objects.select_related("medicine","user").filter(~Q(status="order"),user=user)
-   
+    sum_total=get_cart_total(user)
         
-    return render(request,'customers/cartview.html',{'cart':obj})
-    
+    return render(request,'customers/cartview.html',{'cart':obj,'sumtotal':sum_total})
+def get_cart_total(user):
+        cart_items = CustomerCart.objects.filter(user=user, status='InCart')
+        total = sum(item.total_price() for item in cart_items)
+        return total    
 def login(request):
     if request.method=="POST":
         email=request.POST.get("email")
@@ -246,12 +319,22 @@ def login(request):
             request.session['userid']=user.id
             request.session['username']=user.name
             if user.role=="customer":
+              request.session['customerid']=user.id
+              request.session['customername']=user.name
               return redirect("/customer")
             elif user.role=="supplier":
+                request.session['supplierid']=user.id
+                request.session['suppliername']=user.name
                 return redirect("/supplier")
             elif user.role=="delivery":
+                request.session['deliveryid']=user.id
+                request.session['deliveryname']=user.name
+               
                 return redirect("/delivery")
+                 
+               
         else:
+            messages.error(request,"Invalid email or password")
             return render(request,'customers/login.html',{"message":"Invalid Login"})
 
     return render(request,'customers/login.html',{"message":""})
@@ -260,22 +343,43 @@ def logout(request):
      request.session['username']=""
      messages.info(request,"Successfully Logout")
      return redirect("/login")
+def get_cart_count(user_id):
+    user=get_object_or_404(User_tbl,id=user_id)
+    return CustomerCart.objects.filter(user=user).count()
 def customer(request):
-     userid=request.session.get("userid")
-     query=request.GET.get('q','')
+    userid = request.session.get("customerid")
 
-     usertbl=User_tbl.objects.get(id=userid)
-     medicines=Medicine.objects.all()
-     if query:
-         medicines=medicines.filter(name__icontains=query
-                                    )|medicines.filter(department=query)
-     comments=Comments.objects.filter(user=usertbl)
-     try:
-         return render(request,'customers/customer.html',{"users":usertbl,'medicines': medicines,"comments":comments})
-     except usertbl.DoesNotExist:
-         return redirect("/login")
+    try:
+        usertbl = User_tbl.objects.get(id=userid)
+        cart_count=get_cart_count(userid)
+        request.session['cart_count']=cart_count
+    except User_tbl.DoesNotExist:
+        return redirect("/login")
+
+    query = request.GET.get('q', '')
+    today = now().date()
+    print(today)
+    # Filter only non-expired medicines
+    medicines = Medicine.objects.filter(expiry_date__gte=today)
+
+    # Search filter
+    if query:
+        medicines = medicines.filter(name__icontains=query) | medicines.filter(department__icontains=query)
+
+    # Optional: Debug print each medicine's expiry date
+    for med in medicines:
+        print(f"{med.name} -> Expiry: {med.expiry_date}")
+
+    comments = Comments.objects.filter(user=usertbl)
+
+    return render(request, 'customers/customer.html', {
+        "users": usertbl,
+        'medicines': medicines,
+        "comments": comments,
+        "cart_count":cart_count
+    })
 def supplier(request):
-     userid=request.session.get("userid")
+     userid=request.session.get("supplierid")
      usertbl=User_tbl.objects.get(id=userid)
      medicines=Medicine.objects.all()
      medicinerequest=MedicineRequest.objects.order_by('-id').filter(supplier=usertbl)
@@ -284,34 +388,43 @@ def supplier(request):
      except usertbl.DoesNotExist:
          return redirect("login")     
 def delivery(request):
-    userid=request.session.get('userid')
     try:
-        if userid:
-            user=get_object_or_404(User_tbl,id=userid)
-            area=DeliveryArea.objects.filter(user=user)
-            city=get_object_or_404(DeliveryArea,user=user)
-            delivery_order=DeliveryOrder.objects.filter(user=user)
-            
-            query = request.GET.get('query', '').strip()
-            status=request.POST.get('status', '').strip()
-            deliveryid=request.POST.get('deliveryid','').strip()
-            if status:
-                delivery=get_object_or_404(DeliveryOrder,id=deliveryid)
-                delivery.status=status 
-                delivery.save()
-            if query:
-                print("query",query)
-                delivery_order=delivery_order.filter(user__mobile__icontains=query
-                                )|delivery_order.filter(order__cart__medicine__name__icontains=query
-                                                        )|delivery_order.filter(order__id__icontains=query
-                                                                                )| delivery_order.filter(status__icontains=query)
+        userid=request.session.get('deliveryid')
+        user=User_tbl.objects.get(id=userid)
+        request.session['username']=user.name
+        query=request.GET.get('q','')
+        
+        
+
+        if request.method=="POST":
+                    delid=request.POST.get('deliveryid')
+                    delivery=get_object_or_404(DeliveryDetail,id=delid)
+                    delivery.order.status=request.POST.get('status')
+                    delivery.order.save()
+                    return redirect("/delivery")
+        companys=DeliveryArea.objects.filter(user=user).first()
+        if companys:
+            delivery=DeliveryDetail.objects.filter(companyname__icontains=companys.company)
+            if delivery:
+                if query:
+                    query=query.lower()
+                    delivery=delivery.filter(order__cart__medicine__name__icontains=query
+                                             )| delivery.filter(order__status__icontains=query
+                                                                ) | delivery.fliter(order__user__mobile__icontains=query)
+                return render(request,'delivery/dashboard.html',{'delivery':delivery})
+            else:
+                return render(request,'delivery/dashboard.html')
                 
-                    
-            return render(request,'delivery/dashboard.html',{'area':area,'delivery':delivery_order})
+
+        else:
+            return redirect("/addarea")    
+        
+                        
+        return render(request,'delivery/dashboard.html')
     except Exception as e:
         messages.error(request,"something went wrong")
         return redirect("/login")       
-    return render(request,'delivery/dashboard.html')
+    return render(request,'delivery/dashboard.html',{'users':user})
 def register(request):
     if request.method == "POST":
         name = request.POST.get('name')
@@ -343,7 +456,8 @@ def index(request):
 
 
 def search_medicine(request):
-    medicines = Medicine.objects.all()
+    today=now().date()
+    medicines = Medicine.objects.filter(expiry_date__gte=today)
 
     name = request.GET.get('name', '')
     department = request.GET.get('department', '')
@@ -359,7 +473,8 @@ def search_medicine(request):
     return render(request, 'medicines/search.html', {'medicines': medicines,"departments":department})
 # List all medicines
 def medicine_list(request):
-    medicines = Medicine.objects.all()
+    today = now().date()
+    medicines = Medicine.objects.filter(expiry_date__gte=today)  
     low_stock=Medicine.objects.filter(stock__lt=5)
     
     return render(request, 'medicines/medicine_list.html', {'medicines': medicines,"lowstocks":low_stock})
@@ -368,7 +483,12 @@ from django.db.models import Avg
 from django.core.paginator import Paginator
 
 def medicine_detail(request, medicine_id):
-    medicine = get_object_or_404(Medicine, id=medicine_id)
+    today = now().date()
+    medicine = get_object_or_404(Medicine, id=medicine_id,expiry_date__gte=today)
+    expire=medicine.is_expired()
+    if expire:
+        messages.info(request,"medicine expired")
+        return redirect("/customer")
     comments_list = Comments.objects.filter(medicine=medicine).order_by('-created_at')
     paginator = Paginator(comments_list, 5)  # Show 5 comments per page
     page_number = request.GET.get('page')
@@ -528,7 +648,7 @@ def search_drug(request):
 
     return render(request, 'customers/medicine_search.html', {'query': query, 'data': data, 'error': error})
 def medicineReturn(request, orderid):
-    order = get_object_or_404(Ordernew, id=orderid)
+    order = get_object_or_404(Order, id=orderid)
     order.status = "Return"  # Use past tense for clarity
     order.save()
     
@@ -571,10 +691,10 @@ def  area_delete(request,areaid):
 def prescriptiondelivery(request):
     query=request.GET.get('query','').strip()
     status=request.POST.get('status')
-    userid=request.session.get('userid')
+    userid=request.session.get('deliveryid')
     user=get_object_or_404(User_tbl,id=userid)
-    area=get_object_or_404(DeliveryArea,user=user)
-    perscription=PrescriptionDelivery.objects.order_by('-id').filter(delivery_company=area)
+    area=DeliveryArea.objects.filter(user=user).first()
+    perscription=PrescriptionDeliveryDetail.objects.order_by('-id').filter(companyname=area.company)
     if query:
         perscription=perscription.filter(delivery__user__mobile__icontains=query
                                          )|perscription.filter(delivery__prescription__status__icontains=query)
@@ -594,3 +714,52 @@ def returnprescription(request,pk):
     pre.save()
     messages.info(request,"Your refund will be processed after the medicine has been collected!")
     return redirect("/viewprescription")
+
+
+def newpayment(request):
+    if request.method == "POST":
+        items = request.POST.getlist("items")
+        item_list = []
+
+        for item in items:
+            cart_id, qty = item.split(":")
+          
+            item_list.append({'cart_id': cart_id, 'quantity': qty})
+            print(f"Cart ID: {cart_id}, Quantity: {qty}")
+
+        grand_total = request.POST.get('grand_total')
+        print(f"Grand Total: ₹{grand_total}")
+            
+        grand_total=request.POST.get('grand_total') 
+        print(grand_total)
+        request.session['cart_items'] = item_list
+        request.session['grand_total'] = grand_total
+        return render(request,'customers/checkout.html') # Replace with your success page/view
+
+    return render(request,'paymentpages.html')
+
+def paymentsuccess(request):
+    if request.method=="POST":
+        customerid=request.session.get('customerid')
+        user=User_tbl.objects.get(id=customerid)
+        order,create=Order.objects.get_or_create(
+            user=user,
+            total_amount=request.session.get('grand_total'),
+            status="Paid"
+
+
+        )
+        if create:
+            for cart in request.session.get('cart_items') :
+                medicine=CustomerCart.objects.get(id=cart.cart_id)
+                order_item,create=OrderItem.objects.get_or_create(
+                    order=order,
+                    medicine=medicine.medicine,
+                    total_qty=cart.qty,
+                    total_price=cart.total
+
+
+                )
+        
+
+    return redirect("/customer")

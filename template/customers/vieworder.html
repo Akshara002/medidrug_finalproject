@@ -112,37 +112,48 @@
 {% endfor %}
     <table class="order-table">
         <tr>
-            <th>#</th>
-            <th>Medicine Name</th>
+            <th>Sl No</th>
+            <th>Order Id</th>
             <th>Total Amount</th>
-            <th>Quantity</th>
-            <th>Date</th>
+             <th>Date</th>
             <th>Order Status</th>
+            <th>Delivery Date</th>
             <th>Action</th>
         </tr>
         {% for order in orders %}
+    
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>
-                {{ order.cart.medicine.name }}
-                <br />
-                <img src="{{ order.cart.medicine.image.url }}" alt="{{ order.cart.medicine.name }}" class="order-img">
+                {{ order.id }}
+           <a href="/orderitems/{{order.id}}" class="badge bg-warning">
+            item details
+           </a>     
+                <!-- <br />
+                <img src="{{ order.medicine.image.url }}" alt="{{ order.cart.medicine.name }}" class="order-img"> -->
             </td>
-            <td>${{ order.total_amount }}</td>
-            <td>{{ order.qty }}</td>
+            <td>&#8377;{{ order.total_amount }}</td>
+         
             <td>{{ order.created_at }}</td>
             <td>
                 <span class="status 
-                    {% if order.status == 'Pending' %}pending{% elif order.status == 'Completed' %}completed{% else %}cancelled{% endif %}">
+                    {% if order.status == 'Pending' %}pending{% elif order.status == 'Paid' %}Paid{% else %}cancelled{% endif %}">
                     {{ order.status }}
                 </span>
             </td>
             <td>
-                {% if order.status == "Completed" %}
+                {{ order.deliverydate }}
+            </td>
+            <td>
+                <a href="/order_delete/{{order.id}}" class="badge bg-danger">Delete</a>
+            </td>
+            <td>
+                {% if order.status == "Delivered" %}
                  <a class="btn btn-primary" href="/medicine/return/{{order.id}}">Return Meicine</a>
                  {% endif %}
             </td>
         </tr>
+       
         {% endfor %}
     </table>
 </div>

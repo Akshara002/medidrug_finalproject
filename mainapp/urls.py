@@ -39,5 +39,9 @@ urlpatterns = [
       path("addarea",views.addarea,name="addarea"),
       path("delivery/delete/<int:areaid>",views.area_delete,name='area_delete'),
       path("deliveryprescription/",views.prescriptiondelivery,name="prescriptiondelivery"),
-      path("returnprescription/<int:pk>",views.returnprescription,name="returnprescription")
+      path("returnprescription/<int:pk>",views.returnprescription,name="returnprescription"),
+      path("newpayment",views.newpayment,name="newpayment"),
+      path("payment-success",views.paymentsuccess,name="paymentsuccess"),
+      path("orderitems/<int:pk>",views.orderitems,name="orderitems"),
+      path("order_delete/<int:pk>",views.order_delete,name="order_delete")
 ]

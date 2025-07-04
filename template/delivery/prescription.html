@@ -39,29 +39,29 @@
                 <tr>
                     <td>{{ delivery.id }}</td>
                     <td>
-                        <p><strong>House No:</strong> {{ delivery.delivery.houseno }}</p>
-                        <p><strong>Street:</strong> {{ delivery.delivery.street }}</p>
-                        <p><strong>City:</strong> {{ delivery.delivery.city }}</p>
-                        <p><strong>Zipcode:</strong> {{ delivery.delivery.zipcode }}</p>
-                        <p><strong>Landmark:</strong> {{ delivery.delivery.landmark }}</p>
+                        <p><strong>House No:</strong> {{ delivery.houseno }}</p>
+                        <p><strong>Street:</strong> {{ delivery.street }}</p>
+                        <p><strong>City:</strong> {{ delivery.city }}</p>
+                        <p><strong>Zipcode:</strong> {{ delivery.zipcode }}</p>
+                        <p><strong>Landmark:</strong> {{ delivery.landmark }}</p>
                     </td>
                     <td>{{ delivery.delivery.city }}</td>
                     <td>
-                        <p><strong>Name:</strong> {{ delivery.delivery.user.name }}</p>
-                        <p><strong>Contact No:</strong> {{ delivery.delivery.user.mobile }}</p>
+                        <p><strong>Name:</strong> {{ delivery.user.name }}</p>
+                        <p><strong>Contact No:</strong> {{ delivery.user.mobile }}</p>
                     </td>
                     <td>
-                        <p><strong>Order ID:</strong> {{ delivery.delivery.id }}</p>
+                        <p><strong>Order ID:</strong> {{ delivery.id }}</p>
                       
                         
                         <!-- <p><strong>Order Status:</strong> <span class="badge badge-info">{{ delivery.order.status }}</span></p> -->
                     </td>
                     <td>
-                        <p><strong>Status:</strong> <span class="badge{% if delivery.delivery.prescription.status == 'Delivered' %} bg-success {% else %} bg-danger {% endif %}" >{{ delivery.delivery.prescription.status }}</span></p>
+                        <p><strong>Status:</strong> <span class="badge{% if delivery.prescription.status == 'Delivered' %} bg-success {% else %} bg-danger {% endif %}" >{{ delivery.prescription.status }}</span></p>
                         <p>
                             <form method="post" action="/deliveryprescription/">
                                 {% csrf_token %}
-                                <input type="hidden" name="deliveryid" value="{{delivery.delivery.id}}"/>
+                                <input type="hidden" name="deliveryid" value="{{delivery.id}}"/>
                               <select class=" badge bg-danger" name="status" >
                                 <option value="">Update</option>
                                 <option value="Pending" class="badge  bg-info">Pending</option>

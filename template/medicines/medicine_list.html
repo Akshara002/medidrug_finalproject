@@ -7,30 +7,77 @@
             <i class="fa-solid fa-house-medical"></i> Medicine List
         </h2>
         
-        <div class="row">
+        <div class="row g-4">
             {% for medicine in medicines %}
-            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card medicine-card h-100 border-0">
-                    <div class="image-container">
-                        <img src="{{ medicine.image.url }}" class="card-img-top" alt="{{ medicine.name }}">
+    
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card medicine-card">
+              
+                    <div class="card-img-container">
+                        <img src="{{ medicine.image.url }}" class="medicine-image" alt="{{ medicine.name }}">
                     </div>
+    
                     <div class="card-body">
-                        <h5 class="card-title text-gradient">
-                            <i class="fa-solid fa-pills"></i> {{ medicine.name }}
-                        </h5>
-                        <!-- <p class="card-text text-muted"><i class="fa-solid fa-clipboard"></i> {{ medicine.description }}</p> -->
-                        <p class="price"><i class="fa-solid fa-indian-rupee-sign"></i> {{ medicine.price }}</p>
+                        <div class="ms-2">
+                            {% for i in "12345" %}
+                                {% if i|add:"0" <= medicine.average_rating %}
+                                    <i class="fa-solid fa-star text-warning"></i>  <!-- Filled star -->
+                                {% else %}
+                                    <i class="fa-regular fa-star text-warning"></i>  <!-- Outlined star -->
+                                {% endif %}
+                            {% endfor %}
+                            <!-- <span>({{ comt.rating }}/5)</span> -->
+                        </div>
+                        <h5 class="medicine-title">{{ medicine.name }}</h5>
                         
-                        <a href="{% url 'medicine_detail' medicine.id %}" class="btn view-btn">
-                            <i class="fa-solid fa-arrow-right"></i> View Details
-                        </a>
-
+                
                        
+                        <!-- <p class="medicine-description">{{ medicine.description }}</p> -->
+                        <div class="medicine-price">&#8377;<del><span class="price">{{ medicine.price }}</span> </del>
+                       &nbsp; <span class="badge bg-success">Offer<span class="offer">{{ medicine.offer}} </span> %</span>
+                        </br>
+                        <span class="offerprice"></span>
+                        </div>
+                        <a href="{% url 'medicine_detail' medicine.id %}" class="btn btn-view-details">
+                            <i class="fas fa-arrow-right"></i> View Details
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
+         
+            
         </div>
+ 
+    
+  
+       
+    
+    
+    
+        <!--footer-->
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+                // Get all medicine cards
+                const cards = document.querySelectorAll('.medicine-card');
+        
+                cards.forEach(card => {
+                    const priceElement = card.querySelector('.price');
+                    const offerElement = card.querySelector('.offer');
+                    const offerPriceElement = card.querySelector('.offerprice');
+        
+                    if (priceElement && offerElement && offerPriceElement) {
+                        const price = parseFloat(priceElement.textContent);
+                        const offer = parseInt(offerElement.textContent);
+        
+                        if (!isNaN(price) && !isNaN(offer)) {
+                            const offerPrice = price - ((price * offer) / 100);
+                            offerPriceElement.textContent = "₹" + offerPrice.toFixed(2);
+                        }
+                    }
+                });
+            });
+        </script>
     </div>
 
     <style>

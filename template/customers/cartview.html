@@ -86,8 +86,11 @@
         }
     }
 </style>
-
+<form id="order-form" method="POST" action="/newpayment">
+    {% csrf_token %}
+</form>
 <div class="cart-container">
+    {% if cart %}
     <table>
         <tr>
             <th>Medicine Name</th>
@@ -109,41 +112,112 @@
             <td class="total">{{ item.total }}</td>
             <td>
                 <a href="/cartdelete/{{item.id}}/" class="btn-delete">Delete</a>
-                <button type="button" class="btn-order" onclick='order({{item.id}}, this)'>
-                    Order
-                </button>
+                
             </td>
         </tr>
         {% endfor %}
+        <tr>
+            <td colspan="5" style="text-align: right;"><strong>Grand Total: ₹ <span id="grand-total"></span></strong></td>
+            <td>
+                <div style="text-align: right; margin-top: 20px;">
+                <button type="button" class="btn-order" onclick="orderAllItems()">Order All</button>
+            </div>
+        </td>
+        </tr>
     </table>
+    {% else %}
+     Cart is Empty
+    {% endif %}
 </div>
-
 <script>
-  window.addEventListener("DOMContentLoaded",()=>{
-    let off=parseInt( document.querySelector(".offer").innerHTML);
-    let pr=parseFloat(document.querySelector(".price").innerHTML);
-    document.querySelector('.total').innerHTML=pr-(pr*off/100)
-  })
-    document.querySelectorAll(".quantity-input").forEach(input => {
-        input.addEventListener("change", function() {
-            let price = parseFloat(this.getAttribute("data-price"));
-            let offer=parseInt( document.querySelector(".offer").innerText);
-            
+    // Recalculate grand total
+    function calculateGrandTotal() {
+        let grandTotal = 0;
+        document.querySelectorAll("tr").forEach(row => {
+            const totalCell = row.querySelector(".total");
+            if (totalCell) {
+                const total = parseFloat(totalCell.innerText);
+                if (!isNaN(total)) {
+                    grandTotal += total;
+                }
+            }
+        });
+        document.getElementById("grand-total").innerText = grandTotal.toFixed(2);
+    }
 
-            let quantity = parseInt(this.value);
+    window.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("tr").forEach(row => {
+            const offerEl = row.querySelector(".offer");
+            const priceEl = row.querySelector(".price");
+            const quantityInput = row.querySelector(".quantity-input");
+            const totalCell = row.querySelector(".total");
+
+            if (offerEl && priceEl && quantityInput && totalCell) {
+                const offer = parseInt(offerEl.innerText) || 0;
+                const price = parseFloat(priceEl.innerText) || 0;
+                const quantity = parseInt(quantityInput.value) || 1;
+
+                let total = price * quantity;
+                total -= total * offer / 100;
+
+                totalCell.innerText = total.toFixed(2);
+            }
+        });
+        calculateGrandTotal();
+    });
+
+    document.querySelectorAll(".quantity-input").forEach(input => {
+        input.addEventListener("change", function () {
+            const row = this.closest("tr");
+            const price = parseFloat(this.getAttribute("data-price")) || 0;
+            const offer = parseInt(row.querySelector(".offer").innerText) || 0;
+            const quantity = parseInt(this.value) || 1;
+
             let total = price * quantity;
-            let dis=total*offer/100;
-            total=total-dis;
-            console.log(dis);
-            this.closest("tr").querySelector(".total").innerText = total.toFixed(2);
+            total -= total * offer / 100;
+
+            row.querySelector(".total").innerText = total.toFixed(2);
+            calculateGrandTotal();
         });
     });
 
     function order(cartid, btn) {
         let row = btn.closest("tr");
         let quantity = row.querySelector(".quantity-input").value;
-        window.location.href = `/order?cartid=${cartid}&qty=${quantity}`;
+        window.location.href = `/newpayment?cartid=${cartid}&qty=${quantity}`;
+    }
+
+
+    function orderAllItems() {
+        const form = document.getElementById("order-form");
+        form.innerHTML = `{% csrf_token %}`; // Reset and re-add CSRF token
+
+        document.querySelectorAll("tr").forEach(row => {
+            const input = row.querySelector(".quantity-input");
+            const cartIdMatch = row.innerHTML.match(/\/cartdelete\/(\d+)\//);
+
+            if (input && cartIdMatch) {
+                const cartId = cartIdMatch[1];
+                const quantity = input.value;
+
+                const idInput = document.createElement("input");
+                idInput.type = "hidden";
+                idInput.name = "items";
+                idInput.value = `${cartId}:${quantity}`;
+
+                form.appendChild(idInput);
+            }
+        });
+             // Include grand total
+    const grandTotal = document.getElementById("grand-total").innerText;
+    const grandTotalInput = document.createElement("input");
+    grandTotalInput.type = "hidden";
+    grandTotalInput.name = "grand_total";
+    grandTotalInput.value = grandTotal;
+    form.appendChild(grandTotalInput);
+        form.submit();
     }
 </script>
+
 
 {% endblock %}

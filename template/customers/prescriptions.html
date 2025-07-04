@@ -55,6 +55,7 @@
                         <th>Status</th>
                         <th>Remarks</th>
                         <th>Date</th>
+                        <th>Delivery Date</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -67,6 +68,13 @@
                         <td>{{ prescription.remarks }}</td>
                         <td>{{ prescription.created_at }}</td>
                         <td>
+                            {% if prescription.deliverydate %} 
+                              {{prescription.deliverydate}}
+                              {% else %} 
+                              After Payment Delivery Date Display 
+                              {% endif %}
+                        </td>
+                        <td>
                             {% if prescription.total_amount == '0' %}
                             <strong class="text-muted text-gradient">
                                 <div class="spinner-border spinner-border-sm text-primary" role="status">
@@ -75,7 +83,7 @@
                                 Please wait until the total amount has been processed.
                             </strong>
                         {% elif prescription.status == 'start' %}
-                            <a href="/prescriptioncheckout" class="btn-checkout">Checkout</a>
+                            <a href="/prescriptioncheckout?amount={{ prescription.total_amount }}" class="btn-checkout">Checkout</a>
                         {% elif prescription.status == 'Delivered' %}
                         <a class="btn btn-danger text-gradient" href="/returnprescription/{{ prescription.id }}">Return Order</a>
                             

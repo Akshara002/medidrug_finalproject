@@ -132,9 +132,9 @@ body {
                 <li class="nav-item">
                     <a class="nav-link" href="/addarea"><i class="fa-solid fa-pills"></i> Add Area</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="  #area"><i class="fa-solid fa-cart-shopping"></i> Area Detail</a>
-                </li>
+                </li> -->
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="/vieworder"><i class="fa-solid fa-box"></i> Orders</a>
                 </li>
@@ -154,7 +154,7 @@ body {
             <div class="dropdown ms-3">
                 <button class="btn btn-light dropdown-toggle profile-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="{% static 'img/user.png' %}" alt="User" class="profile-img">
-                    {{ users.name }}
+                    {{ request.session.username}}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <!-- <li><a class="dropdown-item" href="/profile?useremail={{request.session.userid}}"><i class="fa-solid fa-user"></i> Profile</a></li> -->
@@ -211,7 +211,7 @@ body {
 <div class="row justify-content-center shadow">
     <form method="get" class="col-lg-7 p-4" action="/delivery" style="display:flex; gap:20px;">
        
-            <input class="form-control" type="text" name="query" placeholder="search by Medicine Name,Delivery  id,customer phone number,status"/>
+            <input class="form-control" type="text" name="q" placeholder="search by Medicine Name,customer phone number,status"/>
             <button class="btn btn-warning" type="submit">search</button>
 
      
@@ -234,36 +234,36 @@ body {
                 <tr>
                     <td>{{ delivery.id }}</td>
                     <td>
-                        <p><strong>House No:</strong> {{ delivery.delivery.houseno }}</p>
-                        <p><strong>Street:</strong> {{ delivery.delivery.street }}</p>
-                        <p><strong>City:</strong> {{ delivery.delivery.city }}</p>
-                        <p><strong>Zipcode:</strong> {{ delivery.delivery.zipcode }}</p>
-                        <p><strong>Landmark:</strong> {{ delivery.delivery.landmark }}</p>
+                        <p><strong>House No:</strong> {{ delivery.houseno }}</p>
+                        <p><strong>Street:</strong> {{ delivery.street }}</p>
+                        <p><strong>City:</strong> {{ delivery.city }}</p>
+                        <p><strong>Zipcode:</strong> {{ delivery.zipcode }}</p>
+                        <p><strong>Landmark:</strong> {{ delivery.landmark }}</p>
                     </td>
-                    <td>{{ delivery.delivery.city }}</td>
+                    <td>{{ delivery.city  }}</td>
                     <td>
                         <p><strong>Name:</strong> {{ delivery.order.user.name }}</p>
                         <p><strong>Contact No:</strong> {{ delivery.order.user.mobile }}</p>
                     </td>
                     <td>
                         <p><strong>Order ID:</strong> {{ delivery.order.id }}</p>
-                        <p><strong>Medicine Name</strong>{{ delivery.order.cart.medicine.name }}</p>
-                        <p>
-                            <img src="{{ delivery.order.cart.medicine.image.url }}" class="img-thumbnail" style="width:90px; height:90px;"/>
-                        </p>
+                     
+                     
                         <!-- <p><strong>Order Status:</strong> <span class="badge badge-info">{{ delivery.order.status }}</span></p> -->
                     </td>
                     <td>
-                        <p><strong>Status:</strong> <span class="badge{% if delivery.status == 'Delivered' %} bg-success {% else %} bg-danger {% endif %}" >{{ delivery.status }}</span></p>
+                        <p><strong>Status:</strong> <span class="badge{% if delivery.order.status == 'Delivered' %} bg-success {% else %} bg-danger {% endif %}" >{{ delivery.order.status }}</span></p>
+                        <hr/>
                         <p>
                             <form method="post" action="/delivery">
                                 {% csrf_token %}
                                 <input type="hidden" name="deliveryid" value="{{delivery.id}}"/>
                               <select class=" badge bg-danger" name="status" >
-                                <option value="">Update</option>
-                                <option value="Pending" class="badge  bg-info">Pending</option>
+                                <option value="">{{ delivery.order.status }}</option>
+                                <option value="Pending" class="badge  bg-warning">Pending</option>
                                 <option value="Delivered" class="badge  bg-success">Delivered</option>
                                 <option value="Nocontact" class="badge  bg-warning">No Contact</option>
+                                <option value="ReturnCompleted" class="badge  bg-warning">ReturnCompleted</option>
         
                               </select>
                               <button type="submit" class="badge bg-warning m-3  p-2">Update Status</button>
@@ -282,38 +282,6 @@ body {
     </div>
 </div>
 
-<div class="container mt-5" id="area">
-    <table class="table table-primary">
-        <thead>
-         
-            </tr>
-        <tr>
-            <th>Register No</th>
-            <th>Area</th>
-            <th>Company</th>
-            <th>address</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for area in area %}
-        <tr>
-            <td>{{area.id}}</td>
-            <td>{{area.area}}</td>
-            <td>{{area.company}}</td>
-            <td>{{area.company}}</td>
-            <td>
-                <!-- <a href="/delivery/edit/{{area.id}}">Edit</a> |--> <a class="badge bg-warning" href="/delivery/delete/{{area.id}}">Remove</a> 
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-    </table>
-
-
-
-</div>
 
 
 

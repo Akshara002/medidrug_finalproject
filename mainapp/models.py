@@ -68,13 +68,16 @@ class CustomerCart(models.Model):
     def total_price(self):
         return self.quantity * self.medicine.price    
     def __str__(self):
-        return self.medicine.name
+        return self.medicine.name 
+    
+    
 
 class Order(models.Model):
     user = models.ForeignKey(User_tbl, on_delete=models.CASCADE,related_name="user_order")
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=50, choices=[("Pending", "Pending"), ("Completed", "Completed")], default="Pending")
+    status = models.CharField(max_length=50, choices=[("Pending", "Pending"), ("Completed", "Completed"),("Paid","Paid")], default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
+    deliverydate=models.CharField(max_length=100,default="with in 24hour",null=True, blank=True)
 
     def __str__(self):
         return f"Order {self.id} by {self.user.name}"    
@@ -93,7 +96,7 @@ class Ordernew(models.Model):
 
 class DeliveryDetail(models.Model):
     user = models.ForeignKey(User_tbl, on_delete=models.CASCADE,related_name="user_delivery")
-    order=models.ForeignKey(Ordernew, on_delete=models.CASCADE,related_name="order_delivery")
+    order=models.ForeignKey(Order, on_delete=models.CASCADE,related_name="order_delivery")
     houseno=models.CharField(max_length=100)
     street=models.CharField(max_length=100)
     city=models.CharField(max_length=100)
@@ -103,6 +106,7 @@ class DeliveryDetail(models.Model):
     landmark=models.CharField(max_length=100)
     companyname=models.CharField(max_length=100,default="companyname")
     created_at = models.DateTimeField(auto_now_add=True)
+    deliverydate=models.CharField(max_length=100,default="with in 48 hour")
     def __str__(self):
         return f"delivery Area {self.city} for {self.user.name}"   
 
@@ -136,6 +140,7 @@ class Prescription(models.Model):
     status=models.CharField(max_length=100,default='start')  
     total_amount=models.CharField(max_length=100,default='0')
     remarks=models.TextField(max_length=200,default='no remarks')
+    deliverydate=models.CharField(max_length=100,default='with in 48hours',blank=True)
     def __str__(self):
         return f"prescription id: {self.id} by {self.user.name} status:{self.status}" 
     
@@ -160,6 +165,7 @@ class PrescriptionDeliveryDetail(models.Model):
     status=models.CharField(max_length=100,default="pending")
     companyname=models.CharField(max_length=100,default="companyname")
     created_at = models.DateTimeField(auto_now_add=True)
+    deliverydate=models.CharField(max_length=100,default="with in 48hours",null=True, blank=True)
     
     def __str__(self):
         return f"Id:{self.id} Prescription by {self.user.name} and its Status is {self.prescription.status}"   
@@ -174,8 +180,8 @@ class PrescriptionDelivery(models.Model):
 class MedicineRequest(models.Model):
         STATUS_CHOICES = [
         ("Pending", "Pending"),
-        ("processing", "Processing"),
-        ("completed", "Completed"),
+        ("Processing", "Processing"),
+        ("Completed", "Completed"),
         ("Rejected", "Rejected"),
         ]
         Type_CHOICES = [
@@ -203,7 +209,7 @@ STATUS_delivery = [
         ("Processing", "Processing"),
         ("Delivered", "Delivered"),
         ("Rejected", "Rejected"),
-        ("NoContact","nocontact"),
+        ("NoContact","NoContact"),
 
         ]
 class DeliveryOrder(models.Model):
@@ -214,3 +220,10 @@ class DeliveryOrder(models.Model):
     status=models.CharField(max_length=100, choices=STATUS_delivery, default="Pending")
     def __str__(self):
         return f"Delivery{self.user.name}"
+
+class OrderItem(models.Model):
+    order=models.ForeignKey(Order,on_delete=models.CASCADE,related_name="order_item_order")
+    medicine=models.ForeignKey(Medicine,on_delete=models.CASCADE,related_name="order_medicine")
+    total_qty=models.IntegerField()
+    total_price=models.CharField(max_length=100)
+     

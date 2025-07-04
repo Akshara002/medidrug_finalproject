@@ -1,160 +1,180 @@
 {% extends 'customers/customer.html' %}
- {% load static %}
- {% block content %}
- <script>
+{% load static %}
+{% block content %}
+<script>
     window.history.pushState(null, "", window.location.href);
-window.addEventListener("popstate", function () {
-   
-    window.history.pushState(null, "", window.location.href);
-});
- </script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .payment-container {
-            max-width: 450px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .payment-options i {
-            margin-right: 10px;
-        }
-        .btn-pay {
-            background-color: #007bff;
-            color: #fff;
-            font-size: 18px;
-            padding: 10px;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-    <form method="post" action="checkout">
-        {% csrf_token %}
+    window.addEventListener("popstate", function () {
+        window.history.pushState(null, "", window.location.href);
+    });
+</script>
 
-    
-   <div class="container">
-    <div class="row">
-        <div class="col-lg-6">
-             User:{{orders.user.name}} 
-            <h3>Medicine Name:{{orders.cart.medicine.name}}</h3>
-            <img src="{{ orders.cart.medicine.image.url }}" style="width:100%; height:400px;" />
-            <h3>Quantity:{{orders.qty}}</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6"> <!--col-1-->
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Add Delivery Address Here!</h1>
-                </div>
-            <div class="form-group col-lg-4">
-                <label for="">HouseNo</label>
-                <input type="text" class="form-control" name="houseno" placeholder="House Number" required>
-            </div>
-            <div class="form-group col-lg-4">
-                <label for="">Street Name</label>
-                <input type="text" class="form-control" name="street" placeholder="Street Name" required>
-            </div>
-            <div class="form-group col-lg-4">
-                <label for="">City</label>
-                <input type="text" class="form-control" name="city" placeholder="city" required>
-            </div>
-            <div class="form-group col-lg-4">
-                <label for="">State</label>
-                <input type="text" class="form-control" name="state" placeholder="State" required>
-            </div>
-            <div class="form-group col-lg-4">
-                <label for="">Country</label>
-                <input type="text" class="form-control" name="country" placeholder="country" required>
-            </div>
-            <div class="form-group col-lg-4">
-                <label for="">ZipCode</label>
-                <input type="text" class="form-control" name="zipcode" placeholder="zipcode" required>
-            </div>
-            <div class="form-group col-lg-4">
-                <label for="">LandMark</label>
-                <input type="text" class="form-control" name="Landmark" placeholder="Landmark" required>
-            </div>
-              </div>
-        </div><!--col-1 endcol-->
-        <div class="col-lg-6">
-            <div class="container">
-                <div class="payment-container">
-                    <h4 class="text-center">Complete Your Payment</h4>
-                    
-                    <!-- Payment Options -->
-                    <ul class="nav nav-tabs mt-3" id="paymentTabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#card">💳 Credit/Debit Card</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#upi">📲 UPI</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#netbanking">🏦 Net Banking</a>
-                        </li>
-                    </ul>
-        
-                    <div class="tab-content mt-3">
-                        <!-- Card Payment -->
-                        <div class="tab-pane fade show active" id="card">
-                            <form>
-                                <div class="mb-3">
-                                    <label>Card Number</label>
-                                    <input type="text" class="form-control" placeholder="XXXX XXXX XXXX XXXX">
-                                </div>
-                                <div class="mb-3 row">
-                                    <div class="col">
-                                        <label>Expiry Date</label>
-                                        <input type="text" class="form-control" placeholder="MM/YY">
-                                    </div>
-                                    <div class="col">
-                                        <label>CVV</label>
-                                        <input type="text" class="form-control" placeholder="XXX">
-                                    </div>
-                                </div>
-                                <button  type="submit" class="btn btn-pay">Pay ₹{{orders.total_amount}}</button>
-                            </form>
-                        </div>
-        
-                        <!-- UPI Payment -->
-                        <div class="tab-pane fade" id="upi">
-                            <form>
-                                <div class="mb-3">
-                                    <label>UPI ID</label>
-                                    <input type="text" class="form-control" placeholder="yourupi@bank">
-                                </div>
-                                <button class="btn btn-pay">Pay ₹{{orders.total_amount}}</button>
-                            </form>
-                        </div>
-        
-                        <!-- Net Banking -->
-                        <div class="tab-pane fade" id="netbanking">
-                            <form>
-                                <div class="mb-3">
-                                    <label>Select Bank</label>
-                                    <select class="form-control">
-                                        <option>SBI</option>
-                                        <option>HDFC</option>
-                                        <option>ICICI</option>
-                                        <option>Axis Bank</option>
-                                    </select>
-                                </div>
-                                <button class="btn btn-pay">Proceed to Pay</button>
-                            </form>
-                        </div>
+<style>
+    body {
+        background-color: #f1f1f1;
+    }
+
+    .section-title {
+        font-weight: bold;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .form-section,
+    .payment-section {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-pay {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    .btn-pay:hover {
+        background-color: #0056b3;
+        transform: scale(1.03);
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .invalid-input {
+        border-color: red;
+    }
+
+    @media (max-width: 768px) {
+        .form-section,
+        .payment-section {
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+<form method="post" action="checkout" onsubmit="return validatePaymentForm();">
+    {% csrf_token %}
+    <div class="container-fluid mt-5">
+        <div class="row g-4">
+            <!-- Address Section -->
+            <div class="col-md-6 form-section">
+                <div class="section-title">Add Delivery Address</div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>House No</label>
+                        <input type="text" class="form-control" name="houseno" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Street Name</label>
+                        <input type="text" class="form-control" name="street" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>City</label>
+                        <input type="text" class="form-control" name="city" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>State</label>
+                        <input type="text" class="form-control" name="state" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Country</label>
+                        <input type="text" class="form-control" name="country" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Zip Code</label>
+                        <input type="text" class="form-control" name="zipcode" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label>Landmark</label>
+                        <input type="text" class="form-control" name="Landmark" required>
                     </div>
                 </div>
             </div>
-        
+
+            <!-- Payment Section -->
+            <div class="col-md-6 payment-section">
+                <div class="section-title">Complete Your Payment</div>
+
+                <!-- Card Payment -->
+                <div class="mb-3">
+                    <label>Card Number</label>
+                    <input type="text" class="form-control" id="card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label>Expiry Date</label>
+                        <input type="text" class="form-control" id="expiry-date" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="col">
+                        <label>CVV</label>
+                        <input type="text" class="form-control" id="cvv" placeholder="XXX" maxlength="3">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-pay">Pay ₹{{ request.session.grand_total }}</button>
+            </div>
         </div>
     </div>
-   </div>
 </form>
+
+<!-- JS validation -->
+<script>
+    function validatePaymentForm() {
+    let isValid = true;
+
+    const cardNumber = document.getElementById("card-number");
+    const expiryDate = document.getElementById("expiry-date");
+    const cvv = document.getElementById("cvv");
+
+    const cardPattern = /^\d{4} \d{4} \d{4} \d{4}$/;
+    const expiryPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    const cvvPattern = /^\d{3}$/;
+
+    [cardNumber, expiryDate, cvv].forEach(input => input.classList.remove("invalid-input"));
+
+    // Validate Card Number
+    if (!cardPattern.test(cardNumber.value)) {
+        cardNumber.classList.add("invalid-input");
+        isValid = false;
+    }
+
+    // Validate Expiry Date Format
+    if (!expiryPattern.test(expiryDate.value)) {
+        expiryDate.classList.add("invalid-input");
+        isValid = false;
+    } else {
+        // Validate Expiry Date is not in the past
+        const [month, year] = expiryDate.value.split('/');
+        const expMonth = parseInt(month);
+        const expYear = parseInt('20' + year); // Convert '25' to 2025
+
+        const today = new Date();
+        const expiry = new Date(expYear, expMonth);
+
+        if (expiry < today) {
+            expiryDate.classList.add("invalid-input");
+            isValid = false;
+            alert("Card has expired.");
+        }
+    }
+
+    // Validate CVV
+    if (!cvvPattern.test(cvv.value)) {
+        cvv.classList.add("invalid-input");
+        isValid = false;
+    }
+
+    if (!isValid && !alert("Please enter valid payment details.")) {
+        return false;
+    }
+
+    return isValid;
+}
+
+</script>
 
 {% endblock %}
