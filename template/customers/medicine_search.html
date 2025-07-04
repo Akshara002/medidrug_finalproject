@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Search for Medicine</h2>
+    <form method="GET">
+        <input type="text" name="query" class="form-control" placeholder="Enter medicine name eg(Aspirin)" required>
+        <button type="submit" class="btn btn-primary mt-2">Search</button>
+    </form>
+
+    {% if error %}
+        <div class="alert alert-danger mt-3">{{ error }}</div>
+    {% endif %}
+
+    {% if data %}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4 class="card-title">{{ data.openfda.brand_name.0 }}</h4>
+                <p><strong>Manufacturer:</strong> {{ data.openfda.manufacturer_name.0 }}</p>
+                
+                {% if data.purpose %}
+                    <p><strong>Purpose:</strong> {{ data.purpose.0 }}</p>
+                {% else %}
+                    <p><strong>Purpose:</strong> Not available</p>
+                {% endif %}
+
+                {% if data.warnings %}
+                    <p><strong>Warnings:</strong> {{ data.warnings.0 }}</p>
+                {% else %}
+                    <p><strong>Warnings:</strong> No warnings available</p>
+                {% endif %}
+                
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

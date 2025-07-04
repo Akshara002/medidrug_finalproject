@@ -8,7 +8,7 @@
     display:flex;
     justify-content: space-between;
     position:fixed;
-    background-color: rgb(244, 245, 250);
+    background-color: rgb(141, 7, 237);
     padding:10px;
     height:100px;
     z-index:9999;
@@ -34,83 +34,56 @@
     text-align: center;
     width:100px;
     padding:10px;
-    color:rgb(11, 145, 58);
+    color:rgb(227, 239, 231);
     transition:all 2s ease-in-out;
 }
 .naves p a:hover{
     border-bottom: 1px solid black;
 }
-.textdisplay{
-    position: absolute;
-    z-index: 999;
-    width: 50%;
-    padding: 15px;
+
+.main-page{
+    width:100%;
+    padding:20px;
+}
+.medicine{
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 15px;
     justify-content: center;
-    align-items: center;
-    top: 160px;
-    gap: 5px;
-   
+    background-color: aqua  ;
+    
+
+
+}
+.medicine .items{
+    display: flex;
+    height: 350px;
+    margin-top:100px;
+    justify-content: center;
+    gap:10px;
+    padding: 15px;
+    animation: bounce  1s infinite;
+
+}
+.images{
+    width:50%;
+    display: flex;
     
 }
-#about{
-    position:relative;
-    top:500px;
-    transition:top 2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-#products{
-    position:relative;
-    top:500px;
-    transition:top 2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-#department{
-    position: relative;
-    top:500px;
-    transition:top 2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-.medicineslide{
-    position: relative;
-    top:500px;
-    transition:top 2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-#welcome{
-    position: relative;
-    top:500px;
-    transition:top 2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-#welcome2{
-    position: relative;
-    top:500px;
-    transition:top 2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-.textdisplay .item1 > span{
-    font-size: 80px;
-    color:cyan;
-    font-weight: bold;
-}
-.item2 span{
-    font-size: 60px;
-    color:rgb(35, 161, 161);
-}
-.item3 span{
-    font-size: 30px;
-    color:rgb(69, 76, 76);
-}
-.item4 span{
-    font-size: 25px;
-    color:rgb(59, 67, 67);
-}
-.footer{
-    width:100%;
-    position:absolute;
-    bottom:0px;
+.details{
+    width:50%;
     padding:10px;
-}
-.list-group-item a{
-    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 .icons{
     font-size: large;
     color:green;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(10px); }
 }

@@ -1,54 +1,149 @@
 {% extends 'customers/customer.html' %}
- {% load static %}
- {% block content %}
+{% load static %}
+{% block content %}
+
+<style>
+    /* Center the table and make it responsive */
+    .cart-container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(255, 102, 178, 0.2);
+        overflow-x: auto;
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ff99c2;
+    }
+
+    th {
+        background: linear-gradient(135deg, #ff66b2, #ff1a75);
+        color: white;
+        font-weight: bold;
+    }
+
+    tr:hover {
+        background: rgba(255, 204, 230, 0.3);
+        transition: 0.3s ease-in-out;
+    }
+
+    /* Quantity Input */
+    input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        border: 1px solid #ff66b2;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Buttons */
+    .btn-delete, .btn-order {
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-delete {
+        background: #ff4d4d;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #cc0000;
+    }
+
+    .btn-order {
+        background: linear-gradient(45deg, #ff66b2, #ff1a75);
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-order:hover {
+        transform: scale(1.05);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        table {
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+        }
+    }
+</style>
+
+<div class="cart-container">
     <table>
         <tr>
-            <td>Medicine Name</td>
-            <td>Quantity</td>
-            <td>Price</td>
-            <td>Total</td>
-            <td>Action</td>
+            <th>Medicine Name</th>
+            <th>Quantity</th>
+            <th>Offer</th>
+            <th>Price</th>
+             
+            <th>Total</th>
+            <th>Action</th>
         </tr>
         {% for item in cart %}
         <tr>
             <td>{{ item.medicine.name }}</td>
-            <td> 
-                <input type="number" min="{{ item.quantity }}" value="{{ item.quantity }}" id="quantity" />
-            </td>
-            <td class="price">{{ item.medicine.price }}</td>
-            <td class="total">
-                {% with total=item.medicine.price|floatformat:2|add:item.quantity|floatformat:2 %}
-                    {{ item.total }}
-                {% endwith %}
-            </td>
             <td>
-                <a href="cartdelete/{{item.id}}">Delete</a>
-                <button type="button" onclick='order({{item.id}},"#quantity")'>
-                    order
-                </button>'
+                <input type="number" min="{{ item.quantity }}" value="{{ item.quantity }}" class="quantity-input" data-price="{{ item.medicine.price }}" />
+            </td>
+            <td class="offer">{{ item.medicine.offer }}%</td>
+            <td class="price">{{ item.medicine.price }}</td>
+            <td class="total">{{ item.total }}</td>
+            <td>
+                <a href="/cartdelete/{{item.id}}/" class="btn-delete">Delete</a>
+                <button type="button" class="btn-order" onclick='order({{item.id}}, this)'>
+                    Order
+                </button>
             </td>
         </tr>
         {% endfor %}
     </table>
-    <script>
-        const qty=document.querySelector("#quantity")
-        qty.addEventListener("change",()=>{
-            const price=document.querySelectorAll(".price");
-            let totalprice;
-            for(let i=0;i<price.length;i++){
-                totalprice=parseInt(qty.value) * parseInt(price[i].innerHTML)
-                console.log(totalprice)
-                document.querySelector(".total").innerHTML=totalprice;
-            }
-           
+</div>
+
+<script>
+  window.addEventListener("DOMContentLoaded",()=>{
+    let off=parseInt( document.querySelector(".offer").innerHTML);
+    let pr=parseFloat(document.querySelector(".price").innerHTML);
+    document.querySelector('.total').innerHTML=pr-(pr*off/100)
+  })
+    document.querySelectorAll(".quantity-input").forEach(input => {
+        input.addEventListener("change", function() {
+            let price = parseFloat(this.getAttribute("data-price"));
+            let offer=parseInt( document.querySelector(".offer").innerText);
             
-            
-            
-            
-        })
-        function order(cartid,qty){
-            let qtyno=parseFloat(document.querySelector(qty))
-            window.location.href=`/order?cartid=${cartid}&qty=${6}`;
-        }
-    </script>
+
+            let quantity = parseInt(this.value);
+            let total = price * quantity;
+            let dis=total*offer/100;
+            total=total-dis;
+            console.log(dis);
+            this.closest("tr").querySelector(".total").innerText = total.toFixed(2);
+        });
+    });
+
+    function order(cartid, btn) {
+        let row = btn.closest("tr");
+        let quantity = row.querySelector(".quantity-input").value;
+        window.location.href = `/order?cartid=${cartid}&qty=${quantity}`;
+    }
+</script>
+
 {% endblock %}

@@ -1,71 +1,207 @@
 {% extends 'customers/customer.html' %}
- {% load static %}
- {% block content %}
- 
- <div class="row">
-   
-    <div class="col-lg-12 m-3">
-     <!-- Button trigger modal -->
+{% load static %}
+{% block content %}
 
-<form action="/prescription" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        <i class="fa-sharp fa-solid fa-plus"></i>
-      </button>
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Prescription</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-12 text-center mb-4">
+            <h2 class="text-gradient fw-bold">Upload Your Prescription</h2>
+            <p class="text-muted">Easily upload and manage your prescriptions.</p>
         </div>
-        <div class="modal-body">
-          <input type="file" name="prescription" id="">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-    </div>
-    <div class="col-lg-12 mt-3">
-        <table class="table table-secondary">
-            <tr>
-                <th>Prescription</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Remarks</th>
-                <th>Date</th>
-                <th>Action</th>
 
-            </tr>
-            {% for prescription in prescriptions %}
-            <tr>
-                <td><a href="{{ prescription.prescription.url }}" download=""/> document</a> </td>
-                <td>
-                    <i class="fa-solid fa-indian-rupee-sign"></i>   {{ prescription.total_amount }}
-                </td>
-                <td>
-                    {{ prescription.status }}
-                </td>
-                <td>
-                    {{ prescription.remarks }}
-                </td>
-                <td>{{ prescription.created_at }}</td>
-                <td>
-                    <a href="/prescriptioncheckout">Checkout</a>
-                </td>
-            </tr>
+        <!-- Upload Prescription Button -->
+        <div class="col-lg-12 d-flex justify-content-center">
+            <button type="button" class="btn-upload" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <i class="fa-solid fa-plus"></i> Upload Prescription
+            </button>
+        </div>
+
+        <!-- Modal for Uploading Prescription -->
+        <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             {% endfor %}
-        </table>
+        {% endif %}
+            <div class="modal-dialog">
+                <div class="modal-content animated-fadeIn">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-gradient fw-bold">Upload Prescription</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/prescription" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="file" name="prescription" class="form-control mb-3">
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn-submit">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescription List -->
+        <div class="col-lg-12 mt-4">
+            <table class="table table-hover custom-table text-center">
+                <thead>
+                    <tr>
+                        <th>Prescription</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                    <tr class="animated-row">
+                        <td><a href="{{ prescription.prescription.url }}" download="" class="btn-download">Download</a></td>
+                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ prescription.total_amount }}</td>
+                        <td><span class="status-pill">{{ prescription.status }}</span></td>
+                        <td>{{ prescription.remarks }}</td>
+                        <td>{{ prescription.created_at }}</td>
+                        <td>
+                            {% if prescription.total_amount == '0' %}
+                            <strong class="text-muted text-gradient">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                Please wait until the total amount has been processed.
+                            </strong>
+                        {% elif prescription.status == 'start' %}
+                            <a href="/prescriptioncheckout" class="btn-checkout">Checkout</a>
+                        {% elif prescription.status == 'Delivered' %}
+                        <a class="btn btn-danger text-gradient" href="/returnprescription/{{ prescription.id }}">Return Order</a>
+                            
+                            {% elif prescription.status == 'Return' %}
+                            Fund will  Transfer After  Medicine had collected
+                            {% elif prescription.status == 'Collected' %}
+                            <a class="btn btn-danger text-gradient" href="/deleteprescription/{{ prescription.id }}">Remove Order</a>
+
+                        {% else %}    
+                        <strong class="text-muted text-gradient">
+                         
+                            After Medicine  Delivered Return option will visible.
+                        </strong>
+                        {% endif %}
+                        
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
- </div>
- 
+</div>
 
+<style>
+/* Gradient Heading */
+.text-gradient {
+    background: linear-gradient(90deg, #ff66b2, #ff4d94);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
+/* Upload Button */
+.btn-upload {
+    background: linear-gradient(45deg, #ff66b2, #ff4d94);
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
 
- {% endblock %}
+.btn-upload:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 102, 178, 0.3);
+}
+
+/* Modal Fade-in Animation */
+.animated-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Submit Button */
+.btn-submit {
+    background: #ff4d94;
+    border: none;
+    padding: 8px 15px;
+    color: white;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: #ff3380;
+    transform: scale(1.05);
+}
+
+/* Custom Table */
+.custom-table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Row Hover Animation */
+.animated-row:hover {
+    background: rgba(255, 102, 178, 0.1);
+    transition: 0.3s ease-in-out;
+}
+
+/* Status Pill */
+.status-pill {
+    background: #ff66b2;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Checkout Button */
+.btn-checkout {
+    background: #ff66b2;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-checkout:hover {
+    background: #ff4d94;
+    transform: scale(1.05);
+}
+
+/* Download Button */
+.btn-download {
+    background: #ff99c2;
+    padding: 6px 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+}
+
+.btn-download:hover {
+    background: #ff80b3;
+}
+</style>
+
+{% endblock %}

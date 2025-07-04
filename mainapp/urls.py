@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import medicine_detail,register,login,customer,addtoCart,viewCart,cartDelete,Checkout,viewOrder,comments,prescriptionUpload,viewPrescription
+from .views import medicine_detail,register,login,customer,addtoCart,viewCart,cartDelete,Checkout,viewOrder,comments,prescriptionUpload,viewPrescription,supplier,cartDelete
 urlpatterns = [
     path('medicinelist', views.medicine_list, name='medicine_list'),
     path('add/', views.add_medicine, name='add_medicine'),
@@ -12,6 +12,7 @@ urlpatterns = [
       path('register',register,name='register'),
       path('login',login,name="login"),
       path("customer",customer,name="customer"),
+      path("supplier",supplier,name="supplier"),
       path("addtocart",addtoCart,name="addtoCart"),
       path('cartview/',viewCart,name="viewCart"),
       path("cartdelete/<int:itemid>/",views.cartDelete,name="cartDelete"),
@@ -19,9 +20,24 @@ urlpatterns = [
       path("checkout",Checkout,name="Checkout"),
       path("vieworder",viewOrder,name="viewOrder"),
       path("comments",comments,name="comments"),
+      path('add_comment/<int:medicine_id>',views.add_comment,name="add_comment"),
       path("prescription",prescriptionUpload,name="prescriptionUpload"),
       path("viewprescription",viewPrescription,name="viewPrescription"),
+      path("deleteprescription/<int:pk>",views.deletePrescription,name="deleteprescription"),
       path("prescriptioncheckout",views.prescriptionCheckout,name="prescriptionCheckout"),
-
-
+      path("logout",views.logout,name="logout"),
+      path("add_medicine_request",views.add_medicine_request,name="add_medicine_request"),
+      path('update-status/<int:medicine_id>/', views.update_status, name='update_status'),
+      path('delete_medicinerequest/<int:medicine_id>/',views.delete_medicinerequest,name="delete_medicinerequest"),
+      path("profile",views.profile),
+      path('about',views.about),
+      path('contact', views.contact, name='contact'),
+      path('submit-form/', views.submit_form, name='submit_form'),
+      path('search/', views.search_drug, name='search_drug'),
+      path('medicine/return/<int:orderid>',views.medicineReturn,name="medicineReturn"),
+      path("delivery",views.delivery,name="delivery"),
+      path("addarea",views.addarea,name="addarea"),
+      path("delivery/delete/<int:areaid>",views.area_delete,name='area_delete'),
+      path("deliveryprescription/",views.prescriptiondelivery,name="prescriptiondelivery"),
+      path("returnprescription/<int:pk>",views.returnprescription,name="returnprescription")
 ]

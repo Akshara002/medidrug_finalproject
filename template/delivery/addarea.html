@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Delivery Area</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Register Delivery Area</h2>
+        <form id="deliveryForm" method="post">
+            {% csrf_token %}
+            <label for="area">Area:</label>
+            <select class="form-control" id="area" name="area">
+                <option value="select city">select city</option>
+                {% for cities in keralacities %}
+                <option value="{{cities}}">{{cities}}</option>
+                {% endfor %}
+            </select>
+            <span class="error" id="areaError"></span>
+            <br/>
+            <label for="company">Company:</label>
+            <input type="text" id="company" name="company" required>
+            <span class="error" id="companyError"></span>
+            
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+            <span class="error" id="addressError"></span>
+            
+            <!-- <label for="user">User ID:</label>
+            <input type="number" id="user" name="user" required>
+            <span class="error" id="userError"></span> -->
+            
+            <button type="submit">Register</button>
+        </form>
+        <a href="/delivery">home</a>
+    </div>
+    
+    <script>
+        document.getElementById("deliveryForm").addEventListener("submit", function(event) {
+            let isValid = true;
+            
+            document.querySelectorAll(".error").forEach(e => e.textContent = "");
+            
+            if (document.getElementById("area").value.trim() === "") {
+                document.getElementById("areaError").textContent = "Area is required";
+                isValid = false;
+            }
+            if (document.getElementById("company").value.trim() === "") {
+                document.getElementById("companyError").textContent = "Company is required";
+                isValid = false;
+            }
+            if (document.getElementById("address").value.trim() === "") {
+                document.getElementById("addressError").textContent = "Address is required";
+                isValid = false;
+            }
+            if (document.getElementById("user").value.trim() === "") {
+                document.getElementById("userError").textContent = "User ID is required";
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Drug Store</title>
+    <style>
+        /* Body Gradient Background */
+        body {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe6f2 100%);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* About Us Container */
+        .about-container {
+            background: white;
+            padding: 30px;
+            max-width: 600px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(255, 102, 178, 0.25);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Title Styling */
+        .about-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ff4d94;
+            margin-bottom: 15px;
+        }
+
+        /* Content Text */
+        .about-text {
+            font-size: 16px;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        /* Contact Section */
+        .contact-info {
+            margin-top: 20px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .contact-info a {
+            color: #ff4d94;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Button Styling */
+        .btn-home {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff66b2, #ff4d94);
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-home:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 77, 148, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .about-container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .about-title {
+                font-size: 22px;
+            }
+
+            .about-text {
+                font-size: 14px;
+            }
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="about-container">
+        <h2 class="about-title">About Our Drug Store</h2>
+        <p class="about-text">
+            Welcome to our trusted drug store, where your health and well-being are our top priority.
+            We offer a wide range of high-quality medicines, healthcare products, and wellness essentials.
+        </p>
+        <p class="about-text">
+            Our dedicated team ensures that all medications are sourced from reputable manufacturers and meet safety standards.
+            We strive to provide expert guidance and exceptional customer service.
+        </p>
+
+        <div class="contact-info">
+            <p><strong>Contact Us:</strong></p>
+            <p>Email: <a href="mailto:support@drugstore.com">support@drugstore.com</a></p>
+            <p>Phone: +1 234 567 890</p>
+            <p>Address: 123 Health Street, Wellness City, USA</p>
+        </div>
+
+        <a href="/" class="btn-home">Back to Home</a>
+    </div>
+
+</body>
+</html>

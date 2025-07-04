@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -77,7 +78,7 @@ WSGI_APPLICATION = "Medidurg.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db.medidrug_db",
     }
 }
 
@@ -127,3 +128,21 @@ STATICFILES_DIRS=[
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
+JAZZMIN_SETTINGS = {
+    "site_title": "My Admin",
+    "site_header": "MediDrug",
+    "welcome_sign": "Welcome to My Dashboard",
+    "site_logo": "img/logo.png",  # Place logo inside `static/img/`
+    "site_brand": "MediDrug",
+    "copyright": "MediDrug",
+    "search_model": "auth.User",  # Enable search in User model
+}
+JAZZMIN_SETTINGS["theme"] = "lux"  # Options: "darkly", "lux", "superhero", etc.
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "sidebar_fixed": True,
+    "sidebar_light": False,
+}

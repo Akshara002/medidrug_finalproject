@@ -1,0 +1,87 @@
+{% extends 'delivery/dashboard.html' %}
+{% load static %}
+{% block content %}
+   
+
+    <div class="form-container mt-3 p-4 justify-content-center">
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+        <h2 class="text-center">Prescription Delivery Task</h2>
+        <form method="get" class="col-lg-7 p-4" action="/deliveryprescription/" style="display:flex; gap:20px;">
+       
+            <input class="form-control" type="text" name="query" placeholder="search by customer phone number,status"/>
+            <button class="btn btn-warning" type="submit">search</button>
+
+     
+    </form>
+    
+
+               <table class="table table-striped table-hover table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Delivery Address</th>
+                    <th>City</th>
+                    <th>Customer</th>
+                    <th>Order</th>
+                    <th>Delivery Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if delivery %}
+                {% for delivery in delivery %}
+                <tr>
+                    <td>{{ delivery.id }}</td>
+                    <td>
+                        <p><strong>House No:</strong> {{ delivery.delivery.houseno }}</p>
+                        <p><strong>Street:</strong> {{ delivery.delivery.street }}</p>
+                        <p><strong>City:</strong> {{ delivery.delivery.city }}</p>
+                        <p><strong>Zipcode:</strong> {{ delivery.delivery.zipcode }}</p>
+                        <p><strong>Landmark:</strong> {{ delivery.delivery.landmark }}</p>
+                    </td>
+                    <td>{{ delivery.delivery.city }}</td>
+                    <td>
+                        <p><strong>Name:</strong> {{ delivery.delivery.user.name }}</p>
+                        <p><strong>Contact No:</strong> {{ delivery.delivery.user.mobile }}</p>
+                    </td>
+                    <td>
+                        <p><strong>Order ID:</strong> {{ delivery.delivery.id }}</p>
+                      
+                        
+                        <!-- <p><strong>Order Status:</strong> <span class="badge badge-info">{{ delivery.order.status }}</span></p> -->
+                    </td>
+                    <td>
+                        <p><strong>Status:</strong> <span class="badge{% if delivery.delivery.prescription.status == 'Delivered' %} bg-success {% else %} bg-danger {% endif %}" >{{ delivery.delivery.prescription.status }}</span></p>
+                        <p>
+                            <form method="post" action="/deliveryprescription/">
+                                {% csrf_token %}
+                                <input type="hidden" name="deliveryid" value="{{delivery.delivery.id}}"/>
+                              <select class=" badge bg-danger" name="status" >
+                                <option value="">Update</option>
+                                <option value="Pending" class="badge  bg-info">Pending</option>
+                                <option value="Delivered" class="badge  bg-success">Delivered</option>
+                                <option value="Nocontact" class="badge  bg-warning">No Contact</option>
+                                <option value="Collected" class="badge  bg-warning">Collected</option>
+        
+                              </select>
+                              <button type="submit" class="badge bg-warning m-3  p-2">Update Status</button>
+                            </form>
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                 <tr>
+                    <td colspan="6"> No Data Found</td>
+                 </tr>
+                 {% endif %}
+            </tbody>
+        </table>
+        </div>
+{% endblock %}

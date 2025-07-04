@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer</title>
+     <link rel="stylesheet" href="{% static 'css/medical.css' %}">
+      <!-- Bootstrap CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+      <!-- Font Awesome (for icons) -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <style>
+        /* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    color: #333;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Navbar Styles */
+.custom-navbar {
+    background: linear-gradient(90deg, #ff66b2, #ff0080);
+    padding: 12px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.6s ease-in-out;
+}
+
+.custom-navbar .navbar-nav .nav-link {
+    color: #fff !important;
+    font-size: 18px;
+    padding: 10px 15px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+.custom-navbar .navbar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Sidebar */
+.second {
+    background: linear-gradient(135deg, #ff99cc, #ff66b2);
+    padding: 20px;
+    height: 100vh;
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+.second .list-group-item {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+.second .list-group-item:hover {
+    background: rgba(245, 41, 228, 0.81);
+    transform: translateX(10px);
+    border-radius: 10px;
+}
+
+/* Card Animation */
+.card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Search Bar Smooth Expansion */
+.search-bar input {
+    width: 180px;
+    transition: width 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 20px;
+    padding: 8px;
+    border: none;
+    outline: none;
+}
+
+.search-bar input:focus {
+    width: 250px;
+    box-shadow: 0px 0px 10px rgba(255, 0, 128, 0.5);
+}
+
+/* Profile Image Styling */
+.profile-btn img {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+/* Footer Styling */
+footer {
+    background: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+.btn-view-details {
+    background: linear-gradient(45deg, #ff758c, #ff7eb3) !important; /* Pink Gradient */
+    border: none !important;
+    color: white !important;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-view-details:hover {
+    background: linear-gradient(45deg, #ff7eb3, #ff758c) !important; /* Reverse Gradient on Hover */
+    transform: scale(1.05);
+}
+.product-card img {
+    width: 100%;  /* Ensures the image takes full width of the container */
+    height: 200px; /* Set a fixed height for uniformity */
+    object-fit: contain; /* Ensures the whole image is visible without cropping */
+    padding: 10px;
+}
+      </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid">
+        <!-- Brand Logo -->
+        <a class="navbar-brand" href="/customer">
+            <img src="{% static 'img/bg3.jpg' %}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle">
+            <span class="brand-text">MediDrug</span>
+        </a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/customer"><i class="fa-solid fa-house"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/medicinelist"><i class="fa-solid fa-pills"></i> Medicine</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cartview"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vieworder"><i class="fa-solid fa-box"></i> Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/search-medicine"><i class="fa-solid fa-search"></i> Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/prescription"><i class="fa-solid fa-file-medical"></i> Add Prescription</a>
+                </li>
+            </ul>
+
+            <!-- Search Bar -->
+            <form class="d-flex search-bar" action="/search-medicine" method="GET">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search Medicine..." aria-label="Search">
+                <button class="btn btn-light" type="submit"><i class="fa-solid fa-search"></i></button>
+            </form>
+
+            <!-- User Profile Dropdown -->
+            <div class="dropdown ms-3">
+                <button class="btn btn-light dropdown-toggle profile-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{% static 'img/user.png' %}" alt="User" class="profile-img">
+                    {{ users.name }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="/profile?useremail={{request.session.userid}}"><i class="fa-solid fa-user"></i> Profile</a></li>
+                    <li><a class="dropdown-item logout-btn" href="/login"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+    {% comment %} <div class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-2 p-3 border shadow  second"> {% endcomment %}
+                {% comment %} <ul class="list-group">
+                    <li class="list-group-item " aria-current="true"><i class="fa-solid fa-user"></i>  </li>
+                    <li class="list-group-item">   <a href="/customer"><i class="fa-solid fa-house icons"></i> HOME</a> </li>
+                    <li class="list-group-item"><a href="/medicinelist"><i class="fa-solid fa-house-medical"></i> Medicine</a></li>
+                    <li class="list-group-item"><a href="/cartview"><i class="fa-solid fa-cart-shopping"></i>Cart</a></li>
+                    <li class="list-group-item"><a href="/vieworder"><i class="fa-solid fa-truck-fast"></i> Orders</a></li>
+                    <li class="list-group-item"><a href="/search-medicine"><i class="fa-solid fa-magnifying-glass"></i> Search</a></li>
+                    <li class="list-group-item"><a href="/prescription"><i class="fa-sharp fa-solid fa-plus"></i> ADD PRESCRIPTION</a></li>
+                    <li class="list-group-item"><a href="/login">Logout</a></li>
+                  </ul> {% endcomment %}
+             
+                
+                
+                
+                
+            {% comment %} </div>
+            <div class="col-lg-10 thrid p-4"> {% endcomment %}
+              {% block content %}
+              {% comment %} <div class="row">
+                   <div class="col-lg-12 border p-4 shadow">
+                    <h4>Welcome,<i class="fa-solid fa-user"></i>  {{users.name}}</h4>
+                    <h4><i class="fa-solid fa-envelope"></i> {{users.email}}</h4>
+                    <h4><i class="fa-solid fa-phone"></i> {{users.mobile}}</h4>
+                   </div>
+              </div> {% endcomment %}
+             
+              <div class="container mt-4">
+                <div class="container mt-5">
+                    <h2 class="mb-4"><i class="fa-solid fa-house-medical"></i> Medicine List</h2>
+                    <hr>
+                    <div class="row">
+                        {% for medicine in medicines %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="{{ medicine.image.url }}" class="card-img-top" alt="{{ medicine.name }}" style="height:190px;">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fa-solid fa-pen-nib"></i> {{ medicine.name }} id:{{medicine.id}}</h5>
+                                    <p class="card-text"><i class="fa-solid fa-clipboard"></i> {{ medicine.description }}</p>
+                                    <p class="text-muted"> <i class="fa-solid fa-indian-rupee-sign"></i> {{ medicine.price }}</p>
+                                    <a href="{% url 'medicine_detail' medicine.id %}" class="btn btn-view-details"><i class="fa-solid fa-arrow-turn-right"></i> View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+              {% endblock %}
+            </div>
+        </div>
+        <!-- <footer>
+          <div class="container-fluid text-light bg-dark">
+            <div class="row">
+              <div class="col-lg-4">
+                <p>
+                  <a href="/customer">Home</a>
+                </p>
+                <p>
+                  <a href="/search-medicine">Search</a>
+                </p>
+                <p>
+                  <a href="/medicinelist">Medicine</a>
+                </p>
+            
+              </div>
+              <div class="col-lg-4 text-light">
+               <ul>
+                <li>Address</li>
+                <li>Location</li>
+                <li>Street</li>
+                <li>State</li>
+                <li>ZipCode</li>
+                <li>Country</li>
+                </ul>
+              </div>
+              <div class="col-lg-4">
+                <ul>
+                  <li>Address</li>
+                  <li>Location</li>
+                  <li>Street</li>
+                  <li>State</li>
+                  <li>ZipCode</li>
+                  <li>Country</li>
+                  </ul>
+              </div>
+              <div class="col-lg-12 text-center">
+                copyright 2025
+              </div>
+            </div>
+          </div>
+        </footer> -->
+    </div>
+   
+
+
+
+    <!--footer-->
+    
+  
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

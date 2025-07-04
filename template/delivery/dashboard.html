@@ -1,0 +1,382 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>delivery</title>
+     <link rel="stylesheet" href="{% static 'css/medical.css' %}">
+      <!-- Bootstrap CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+      <!-- Font Awesome (for icons) -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* Modified Body Gradient */
+body {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe6f2 100%);
+}
+
+/* Enhanced Profile Dropdown */
+.profile-btn {
+    background: linear-gradient(45deg, #ff80b3, #ff4d94) !important;
+    border: none !important;
+    padding: 6px 15px !important;
+    border-radius: 25px !important;
+    transition: all 0.3s ease !important;
+}
+
+.profile-btn img {
+    width: 35px !important;
+    height: 35px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    margin-right: 8px !important;
+}
+
+.profile-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 77, 148, 0.3);
+}
+
+/* Pink Gradient Dropdown Menu */
+.dropdown-menu {
+    border: none !important;
+    background: linear-gradient(145deg, #ffb3d1, #ff99c2) !important;
+    box-shadow: 0 8px 20px rgba(255, 102, 178, 0.2);
+}
+
+.dropdown-item {
+    color: #4a4a4a !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateX(5px);
+}
+
+/* Medicine Image Styling */
+.medicine-image {
+    width: 200px;  /* Ensuring uniform size */
+    height: 250px;
+    object-fit: cover; /* Prevents distortion */
+    border-radius: 10px; /* Smooth corners */
+    transition: transform 0.3s ease-in-out;
+}
+
+.medicine-image:hover {
+    transform: scale(1.1);
+}
+
+/* Medicine Card Layout */
+.medicine-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.medicine-card {
+    width: 250px;
+    padding: 10px;
+    text-align: center;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Navbar Gradient */
+.custom-navbar {
+    background: linear-gradient(135deg, #ff66b2, #ff1a75) !important;
+    box-shadow: 0 4px 20px rgba(255, 102, 178, 0.25);
+}
+
+/* Gradient Buttons */
+.btn-view-details {
+    background: linear-gradient(45deg, #ff66b2, #ff4d94) !important;
+    border: none !important;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-view-details:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 77, 148, 0.3);
+}
+
+
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid">
+        <!-- Brand Logo -->
+        <a class="navbar-brand" href="/customer">
+            <img src="{% static 'img/bg3.jpg' %}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle">
+            <span class="brand-text">MediDrug</span>
+        </a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/delivery"><i class="fa-solid fa-house"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/addarea"><i class="fa-solid fa-pills"></i> Add Area</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="  #area"><i class="fa-solid fa-cart-shopping"></i> Area Detail</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="/vieworder"><i class="fa-solid fa-box"></i> Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/search-medicine"><i class="fa-solid fa-search"></i> Search</a>
+                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/deliveryprescription/">
+                        <i class="fa-solid fa-file-medical"></i>  Prescription
+                     </a>
+                </li> 
+            </ul>
+
+
+
+            <!-- User Profile Dropdown -->
+            <div class="dropdown ms-3">
+                <button class="btn btn-light dropdown-toggle profile-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{% static 'img/user.png' %}" alt="User" class="profile-img">
+                    {{ users.name }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <!-- <li><a class="dropdown-item" href="/profile?useremail={{request.session.userid}}"><i class="fa-solid fa-user"></i> Profile</a></li> -->
+                    <li><a class="dropdown-item logout-btn" href="/login"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+    {% comment %} <div class="container-fluid">
+        <div class="row g-3">
+            <div class="col-lg-2 p-3 border shadow  second"> {% endcomment %}
+                {% comment %} <ul class="list-group">
+                    <li class="list-group-item " aria-current="true"><i class="fa-solid fa-user"></i>  </li>
+                    <li class="list-group-item">   <a href="/delivery"><i class="fa-solid fa-house icons"></i> HOME</a> </li>
+                  
+                    
+                    <li class="list-group-item"><a href="/addarea"><i class="fa-solid fa-house-medical"></i>AddArea</a></li>
+                    <li class="list-group-item"><a href="/addarea"><i class="fa-solid fa-cart-shopping"></i>Add your delivery area</a></li>
+                    <!-- <li class="list-group-item"><a href="/vieworder"><i class="fa-solid fa-truck-fast"></i> Orders</a></li>
+                    <li class="list-group-item"><a href="/search-medicine/"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>-->
+                    <li class="list-group-item"><a href="/delivery/prescription"><i class="fa-sharp fa-solid fa-plus"></i>  PRESCRIPTION</a></li> 
+                    <li class="list-group-item"><a href="/login">Logout</a></li>
+                  </ul> {% endcomment %}
+             
+                
+                
+                
+                
+            {% comment %} </div>
+            <div class="col-lg-10 thrid p-4"> {% endcomment %}
+              {% block content %}
+              {% comment %} <div class="row">
+                   <div class="col-lg-12 border p-4 shadow">
+                    <h4>Welcome,<i class="fa-solid fa-user"></i>  {{users.name}}</h4>
+                    <h4><i class="fa-solid fa-envelope"></i> {{users.email}}</h4>
+                    <h4><i class="fa-solid fa-phone"></i> {{users.mobile}}</h4>
+                   </div>
+              </div> {% endcomment %}
+             
+              <div class="container mt-4">
+         {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+                
+<h1 class="text-center">Task To Complete</h1>
+<div class="row justify-content-center shadow">
+    <form method="get" class="col-lg-7 p-4" action="/delivery" style="display:flex; gap:20px;">
+       
+            <input class="form-control" type="text" name="query" placeholder="search by Medicine Name,Delivery  id,customer phone number,status"/>
+            <button class="btn btn-warning" type="submit">search</button>
+
+     
+    </form>
+    <div class="col-lg-12">
+        <table class="table table-striped table-hover table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Delivery Address</th>
+                    <th>City</th>
+                    <th>Customer</th>
+                    <th>Order</th>
+                    <th>Delivery Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if delivery %}
+                {% for delivery in delivery %}
+                <tr>
+                    <td>{{ delivery.id }}</td>
+                    <td>
+                        <p><strong>House No:</strong> {{ delivery.delivery.houseno }}</p>
+                        <p><strong>Street:</strong> {{ delivery.delivery.street }}</p>
+                        <p><strong>City:</strong> {{ delivery.delivery.city }}</p>
+                        <p><strong>Zipcode:</strong> {{ delivery.delivery.zipcode }}</p>
+                        <p><strong>Landmark:</strong> {{ delivery.delivery.landmark }}</p>
+                    </td>
+                    <td>{{ delivery.delivery.city }}</td>
+                    <td>
+                        <p><strong>Name:</strong> {{ delivery.order.user.name }}</p>
+                        <p><strong>Contact No:</strong> {{ delivery.order.user.mobile }}</p>
+                    </td>
+                    <td>
+                        <p><strong>Order ID:</strong> {{ delivery.order.id }}</p>
+                        <p><strong>Medicine Name</strong>{{ delivery.order.cart.medicine.name }}</p>
+                        <p>
+                            <img src="{{ delivery.order.cart.medicine.image.url }}" class="img-thumbnail" style="width:90px; height:90px;"/>
+                        </p>
+                        <!-- <p><strong>Order Status:</strong> <span class="badge badge-info">{{ delivery.order.status }}</span></p> -->
+                    </td>
+                    <td>
+                        <p><strong>Status:</strong> <span class="badge{% if delivery.status == 'Delivered' %} bg-success {% else %} bg-danger {% endif %}" >{{ delivery.status }}</span></p>
+                        <p>
+                            <form method="post" action="/delivery">
+                                {% csrf_token %}
+                                <input type="hidden" name="deliveryid" value="{{delivery.id}}"/>
+                              <select class=" badge bg-danger" name="status" >
+                                <option value="">Update</option>
+                                <option value="Pending" class="badge  bg-info">Pending</option>
+                                <option value="Delivered" class="badge  bg-success">Delivered</option>
+                                <option value="Nocontact" class="badge  bg-warning">No Contact</option>
+        
+                              </select>
+                              <button type="submit" class="badge bg-warning m-3  p-2">Update Status</button>
+                            </form>
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                 <tr>
+                    <td colspan="6"> No Data Found</td>
+                 </tr>
+                 {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container mt-5" id="area">
+    <table class="table table-primary">
+        <thead>
+         
+            </tr>
+        <tr>
+            <th>Register No</th>
+            <th>Area</th>
+            <th>Company</th>
+            <th>address</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for area in area %}
+        <tr>
+            <td>{{area.id}}</td>
+            <td>{{area.area}}</td>
+            <td>{{area.company}}</td>
+            <td>{{area.company}}</td>
+            <td>
+                <!-- <a href="/delivery/edit/{{area.id}}">Edit</a> |--> <a class="badge bg-warning" href="/delivery/delete/{{area.id}}">Remove</a> 
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+    </table>
+
+
+
+</div>
+
+
+
+              {% endblock %}
+            </div>
+        </div>
+        <script>
+            window.addEventListener("DOMContentLoaded",()=>{
+                
+            })
+        </script>
+        <!-- <footer>
+          <div class="container-fluid text-light bg-dark">
+            <div class="row">
+              <div class="col-lg-4">
+                <p>
+                  <a href="/customer">Home</a>
+                </p>
+                <p>
+                  <a href="/search-medicine">Search</a>
+                </p>
+                <p>
+                  <a href="/medicinelist">Medicine</a>
+                </p>
+            
+              </div>
+              <div class="col-lg-4 text-light">
+               <ul>
+                <li>Address</li>
+                <li>Location</li>
+                <li>Street</li>
+                <li>State</li>
+                <li>ZipCode</li>
+                <li>Country</li>
+                </ul>
+              </div>
+              <div class="col-lg-4">
+                <ul>
+                  <li>Address</li>
+                  <li>Location</li>
+                  <li>Street</li>
+                  <li>State</li>
+                  <li>ZipCode</li>
+                  <li>Country</li>
+                  </ul>
+              </div>
+              <div class="col-lg-12 text-center">
+                copyright 2025
+              </div>
+            </div>
+          </div>
+        </footer> -->
+    </div>
+   
+
+
+
+    <!--footer-->
+    
+  
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
